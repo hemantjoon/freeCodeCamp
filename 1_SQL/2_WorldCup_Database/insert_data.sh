@@ -11,22 +11,21 @@ fi
 
 while IFS="," read -r year round winner opponent winner_goals opponent_goals
 do
-  # check whether the country has been inserted already
   TEAM_ALREADY_CHECK=$($PSQL "SELECT team_id FROM teams WHERE name = '$winner'")
   if [[ -z $TEAM_ALREADY_CHECK ]]
   then
-     $($PSQL "INSERT INTO teams(name) VALUES('$winner')")
+     $PSQL "INSERT INTO teams(name) VALUES('$winner')"
   fi
+
   TEAM_ALREADY_CHECK=$($PSQL "SELECT team_id FROM teams WHERE name = '$opponent'")
   if [[ -z $TEAM_ALREADY_CHECK ]]
   then
-     $($PSQL "INSERT INTO teams(name) VALUES('$opponent')")
+     $PSQL "INSERT INTO teams(name) VALUES('$opponent')"
   fi
-  
 
   WINNER_ID=$($PSQL "SELECT team_id FROM teams WHERE name = '$winner'")
   OPPONENT_ID=$($PSQL "SELECT team_id FROM teams WHERE name = '$opponent'")
 
-  $($PSQL "INSERT INTO games(year, round, winner_id, opponent_id, winner_goals, opponent_goals) VALUES($year, '$round', $WINNER_ID, $OPPONENT_ID, $winner_goals, $opponent_goals)")
+  $PSQL "INSERT INTO games(year, round, winner_id, opponent_id, winner_goals, opponent_goals) VALUES($year, '$round', $WINNER_ID, $OPPONENT_ID, $winner_goals, $opponent_goals)"
 
-done < <(tail -n +2 games.csv)
+done < <(tail -n +2 $1)
